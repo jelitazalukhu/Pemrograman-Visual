@@ -1,12 +1,12 @@
 # Pengenalan Pemrograman Visual
 
-## Definisi Pemrograman Visual
+## 1. Definisi Pemrograman Visual
 
 Pemrograman visual adalah pendekatan dalam membuat program di mana tampilan antarmuka (UI) dirancang secara visual menggunakan komponen-komponen yang bisa langsung dilihat dan diatur, tanpa harus menulis kode untuk membangun tampilannya dari awal. Pengembang cukup menyusun elemen seperti tombol, kotak teks, atau label melalui editor visual, kemudian menambahkan logika program melalui kode di baliknya.
 
 Pendekatan ini banyak digunakan untuk membangun aplikasi desktop, karena mempercepat proses pembuatan tampilan dan memudahkan pengembang melihat langsung hasil rancangannya.
 
-## Visual Studio
+## 2. Visual Studio
 
 Visual Studio adalah salah satu Integrated Development Environment (IDE) yang dikembangkan oleh Microsoft, digunakan untuk membuat berbagai jenis aplikasi, termasuk aplikasi desktop berbasis Windows Forms. IDE ini menyediakan tools lengkap mulai dari editor kode, desainer tampilan (Form Designer), hingga fitur debugging dalam satu aplikasi.
 
@@ -17,11 +17,11 @@ Visual Studio adalah salah satu Integrated Development Environment (IDE) yang di
 - **Form Designer** → area kerja utama untuk mendesain tampilan Form secara visual.
 - **Properties Window** → menampilkan dan mengatur Property dari Control atau Form yang sedang dipilih.
 
-## VB.NET
+## 3. VB.NET
 
 VB.NET (Visual Basic .NET) adalah bahasa pemrograman yang digunakan dalam praktikum ini untuk menulis logika program di balik tampilan yang sudah dirancang di Form Designer. VB.NET dikembangkan oleh Microsoft dan berjalan di atas platform .NET, sehingga bisa memanfaatkan berbagai library dan fitur yang disediakan .NET Framework.
 
-### Karakteristik VB.NET
+### 3.1 Karakteristik VB.NET
 
 - Menggunakan sintaks yang relatif mudah dibaca, mendekati bahasa Inggris sehari-hari.
 - Bersifat **event-driven**, artinya kode dijalankan berdasarkan kejadian (Event) tertentu, seperti saat tombol diklik atau Form dibuka.
