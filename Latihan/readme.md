@@ -62,3 +62,41 @@ Event adalah kejadian yang dapat memicu kode untuk dijalankan.
 
 ---
 # Pertemuan 3
+```vb
+ Private Sub btnInput_Click(sender As Object, e As EventArgs) Handles btnInput.Click
+     Dim nilai As Integer
+     If Not Integer.TryParse(txtNilai.Text, nilai) Then
+         MessageBox.Show("Masukkan Angka") 'Cek Apakah user input bukan angka
+     End If
+
+    If nilai < 0 OrElse nilai > 100 Then
+        MessageBox.Show("Angka harus diantara 0 - 100") 'operator 
+    Return
+    End If
+
+'Percabangan If
+     If nilai > 70 Then
+         MessageBox.Show("Anda Lulus")
+     End If
+ End Sub
+
+'Percabangan If Else
+    If nilai > 70 Then
+        MessageBox.Show ("Lulus")
+    Else
+        MessageBox.Show ("Tidak Lulus")
+    End If
+
+'Percabangan If elseif
+    If nilai >= 85 Then
+        MessageBox.Show("Nilai A")
+    ElseIf nilai >= 70 Then
+        MessageBox.Show("Nilai B")
+    ElseIf nilai >= 55 Then
+        MessageBox.Show("Nilai C")
+    Else
+        MessageBox.Show("Nilai E")
+    End If
+```
+---
+# Pertemuan 4
