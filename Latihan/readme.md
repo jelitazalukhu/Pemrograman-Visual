@@ -118,3 +118,101 @@ Event adalah kejadian yang dapat memicu kode untuk dijalankan.
 ```
 
 # Pertemuan 5
+Dalam materi ini, terdapat module yaitu tempat tempat untuk menyimpan kode yang dapat digunakan kembali, seperti Sub, Function, variabel, dan array. Dengan Module, kode tidak perlu ditulis berulang kali di setiap Form.
+contoh:
+```vb
+Module ModPerhitungan
+    ' Sub: menjalankan perintah tanpa mengembalikan nilai
+    Public Sub tampilkanPesan(nama As String)
+        MessageBox.Show("Halo " & nama)
+    End Sub
+
+    ' Function: melakukan perhitungan dan mengembalikan nilai Integer
+    Public Function hitung(panjang As Integer, lebar As Integer) As Integer
+        If panjang < 50 Then
+            Return 2 * (panjang + lebar)
+        Else
+            Return panjang * lebar
+        End If
+    End Function
+
+    ' Array satu dimensi
+    Public nilai() As Integer = {70, 80, 90, 100}
+
+    ' Array dua dimensi (baris dan kolom)
+    Public nilai2D(,) As Integer = {
+        {80, 85, 82},
+        {70, 72, 78},
+        {90, 92, 95}
+    }
+End Module
+```
+contoh di formnya
+```vb
+Public Class FrmArray
+    Private Sub btnTampilkan_Click(sender As Object, e As EventArgs) Handles btnTampilkan.Click
+        ' Memanggil Sub dari Module
+        tampilkanPesan("Jelita")
+
+        ' Menampilkan jumlah elemen array
+        MessageBox.Show(nilai.Length.ToString())
+
+        ' Memanggil Function dari Module
+        Dim hasil As Integer = hitung(
+            CInt(txtPanjang.Text),
+            CInt(txtLebar.Text)
+        )
+        MessageBox.Show(hasil.ToString())
+
+        ' Menampilkan seluruh elemen array satu dimensi
+        For i As Integer = 0 To nilai.Length - 1
+            lstNilai.Items.Add(nilai(i))
+        Next
+
+        ' Mengambil elemen array dua dimensi pada baris 0, kolom 1
+        MessageBox.Show(nilai2D(0, 1).ToString())
+    End Sub
+End Class
+```
+koleksi data: struktur yang digunakan untuk menyimpan dan mengelola sekumpulan data dalam satu variabel atau objek, contohnya List(Of T)
+```vb
+' Membuat List untuk menyimpan angka Integer
+Dim daftarNilai As New List(Of Integer)
+
+' Menambahkan data ke dalam List
+daftarNilai.Add(70)
+daftarNilai.Add(80)
+daftarNilai.Add(90)
+
+' Menampilkan jumlah elemen
+MessageBox.Show(daftarNilai.Count.ToString())
+
+' Mengakses elemen pertama (indeks dimulai dari 0)
+MessageBox.Show(daftarNilai(0).ToString())
+
+' Menghapus elemen bernilai 80
+daftarNilai.Remove(80)
+```
+contoh dengan for each
+```vb
+For Each angka As Integer In daftarNilai
+    MessageBox.Show(angka.ToString())
+Next
+```
+list untuk menyimpan nama
+```vb
+' Membuat List untuk menyimpan teks
+Dim daftarNama As New List(Of String)
+
+' Menambahkan nama
+daftarNama.Add("Jelita")
+daftarNama.Add("rani")
+daftarNama.Add("kai")
+
+' Menampilkan setiap nama
+For Each nama As String In daftarNama
+    MessageBox.Show(nama)
+Next
+```
+---
+# Pertemuan 7
