@@ -216,3 +216,228 @@ Next
 ```
 ---
 # Pertemuan 7
+uji konversi
+```vb
+Option Strict On
+Public Class FrmUjiKonversi
+    ' 1. CInt: mengubah teks menjadi Integer
+    Private Sub btnCInt_Click(sender As Object, e As EventArgs) Handles btnCInt.Click
+        Dim angka As Integer = CInt(txtInput.Text)
+        lblHasil.Text = "CInt berhasil: " & angka.ToString()
+    End Sub
+    ' 2. Val: membaca nilai numerik dari teks
+    Private Sub btnVal_Click(sender As Object, e As EventArgs) Handles btnVal.Click
+        Dim angka As Double = Val(txtInput.Text)
+        lblHasil.Text = "Val menghasilkan: " & angka.ToString()
+    End Sub
+    ' 3. TryParse: memeriksa apakah teks dapat diubah menjadi Integer
+    Private Sub btnTryParse_Click(sender As Object, e As EventArgs) Handles btnTryParse.Click
+        Dim angka As Integer
+        If Integer.TryParse(txtInput.Text, angka) Then
+            lblHasil.Text = "Valid. Nilai angka = " & angka.ToString()
+        Else
+            lblHasil.Text = "Bukan bilangan bulat yang valid. Tidak ada exception."
+        End If
+    End Sub
+    ' 4. Try...Catch: menangani exception saat konversi
+    Private Sub btnTryCatch_Click(sender As Object, e As EventArgs) Handles btnTryCatch.Click
+        Try
+            Dim angka As Integer = Integer.Parse(txtInput.Text)
+            lblHasil.Text = "Berhasil dikonversi: " & angka.ToString()
+        Catch ex As Exception
+            lblHasil.Text = "Konversi gagal, program tetap berjalan."
+            MessageBox.Show("Input harus bilangan bulat, misalnya 25." & vbCrLf &
+                            "Detail: " & ex.Message, "Input Tidak Valid",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        End Try
+    End Sub
+    ' 5. Beberapa Catch untuk menangani jenis exception berbeda
+    Private Sub btnCatchBertingkat_Click(sender As Object, e As EventArgs) Handles btnCatchBertingkat.Click
+        Try
+            Dim angka As Integer = Integer.Parse(txtInput.Text)
+            Dim hasil As Integer = 1000 \ angka
+            lblHasil.Text = "1000 \ " & angka.ToString() & " = " & hasil.ToString()
+        Catch ex As FormatException
+            lblHasil.Text = "Format salah: input bukan bilangan bulat."
+        Catch ex As OverflowException
+            lblHasil.Text = "Angka terlalu besar untuk tipe Integer."
+        Catch ex As DivideByZeroException
+            lblHasil.Text = "Pembagian dengan nol tidak diperbolehkan."
+        Catch ex As Exception
+            lblHasil.Text = "Error lain: " & ex.Message
+        End Try
+    End Sub
+End Class
+```
+form pendaftaran sebagai validasi dan error
+```vb
+Option Strict On
+Imports System.ComponentModel
+Imports System.IO
+Imports System.Globalization
+Public Class FrmPendaftaran
+    ' Menyimpan NIM yang sudah didaftarkan selama Form digunakan
+    Private ReadOnly daftarNim As New List(Of String)
+    ' Menentukan lokasi file CSV di folder Documents
+    Private ReadOnly lokasiEkspor As String =
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                     "data-mahasiswa.csv")
+    ' Memeriksa apakah teks kosong atau hanya berisi spasi
+    Private Function Kosong(teks As String) As Boolean
+        Return teks.Trim() = ""
+    End Function
+    ' Memeriksa apakah teks berisi digit 0-9 dengan panjang tertentu
+    Private Function SemuaDigit(teks As String, panjang As Integer) As Boolean
+        If teks.Length <> panjang Then Return False
+        For Each karakter As Char In teks
+            If karakter < "0"c OrElse karakter > "9"c Then Return False
+        Next
+        Return True
+    End Function
+    ' Mengonversi teks desimal; koma dan titik sama-sama diterima
+    Private Function CobaDesimal(teks As String, ByRef hasil As Decimal) As Boolean
+        Dim teksTitik As String = teks.Trim().Replace(",", ".")
+        Return Decimal.TryParse(teksTitik, NumberStyles.AllowDecimalPoint,
+                                CultureInfo.InvariantCulture, hasil)
+    End Function
+    ' Memeriksa semua input sebelum data disimpan
+    Private Function ValidasiInput() As Boolean
+        errInput.Clear()
+        Dim valid As Boolean = True
+        ' Nama wajib diisi
+        If Kosong(txtNama.Text) Then
+            errInput.SetError(txtNama, "Nama wajib diisi.")
+            valid = False
+        End If
+        ' Angkatan harus angka antara 2015 dan tahun sekarang
+        Dim angkatan As Integer
+        If Not Integer.TryParse(txtAngkatan.Text, angkatan) OrElse
+           angkatan < 2015 OrElse angkatan > Date.Today.Year Then
+            errInput.SetError(txtAngkatan, "Angkatan harus angka 2015 s.d. tahun ini.")
+            valid = False
+        End If
+        ' NIM harus terdiri dari 9 digit dan tidak boleh duplikat
+        If Not SemuaDigit(txtNim.Text, 9) Then
+            errInput.SetError(txtNim, "NIM harus 9 digit angka.")
+            valid = False
+        ElseIf daftarNim.Contains(txtNim.Text) Then
+            errInput.SetError(txtNim, "NIM sudah terdaftar.")
+            valid = False
+        End If
+        ' Jurusan wajib dipilih
+        If cboJurusan.SelectedIndex = -1 Then
+            errInput.SetError(cboJurusan, "Pilih salah satu jurusan.")
+            valid = False
+        End If
+        ' IPK harus berupa angka antara 0 dan 4
+        Dim ipk As Decimal
+        If Not CobaDesimal(txtIpk.Text, ipk) OrElse ipk < 0D OrElse ipk > 4D Then
+            errInput.SetError(txtIpk, "IPK harus angka 0,00 s.d. 4,00.")
+            valid = False
+        End If
+        Return valid
+    End Function
+    ' Menyimpan data jika semua input valid
+    Private Sub btnSimpan_Click(sender As Object, e As EventArgs) Handles btnSimpan.Click
+        If Not ValidasiInput() Then
+            lblStatus.Text = "Periksa isian yang bertanda merah."
+            Return
+        End If
+        ' Mengambil nilai IPK yang sudah divalidasi
+        Dim ipk As Decimal
+        CobaDesimal(txtIpk.Text, ipk)
+        ' Menggabungkan data mahasiswa menjadi satu baris
+        lstMahasiswa.Items.Add(txtNim.Text & " | " & txtNama.Text.Trim() & " | " &
+                               cboJurusan.Text & " | " & txtAngkatan.Text & " | " &
+                               ipk.ToString("0.00"))
+        ' Menandai NIM agar tidak bisa digunakan kembali
+        daftarNim.Add(txtNim.Text)
+        lblStatus.Text = "Data " & txtNama.Text.Trim() & " tersimpan."
+        ' Mengosongkan Form untuk data berikutnya
+        BersihkanForm()
+    End Sub
+    ' Memvalidasi format NIM saat fokus meninggalkan TextBox
+    Private Sub txtNim_Validating(sender As Object, e As CancelEventArgs) Handles txtNim.Validating
+        If txtNim.Text = "" Then Return
+        If SemuaDigit(txtNim.Text, 9) Then
+            errInput.SetError(txtNim, "")
+        Else
+            errInput.SetError(txtNim, "NIM harus 9 digit angka.")
+        End If
+    End Sub
+    ' Mengekspor data ListBox ke file CSV
+    Private Sub btnEkspor_Click(sender As Object, e As EventArgs) Handles btnEkspor.Click
+        Dim penulis As StreamWriter = Nothing
+        Try
+            penulis = New StreamWriter(lokasiEkspor)
+
+            For Each baris As Object In lstMahasiswa.Items
+                penulis.WriteLine(baris.ToString().Replace(" | ", ";"))
+            Next
+
+            lblStatus.Text = "Data diekspor ke " & lokasiEkspor
+
+        Catch ex As IOException
+            MessageBox.Show("File sedang dipakai program lain atau tidak bisa ditulis." &
+                            vbCrLf & ex.Message, "Ekspor Gagal")
+        Finally
+            If penulis IsNot Nothing Then penulis.Close()
+        End Try
+    End Sub
+    ' Mengosongkan input dan menghapus pesan validasi
+    Private Sub BersihkanForm()
+        txtNim.Clear()
+        txtNama.Clear()
+        txtAngkatan.Clear()
+        txtIpk.Clear()
+        cboJurusan.SelectedIndex = -1
+        errInput.Clear()
+        txtNim.Focus()
+    End Sub
+    ' Tombol untuk membersihkan Form
+    Private Sub btnBersihkan_Click(sender As Object, e As EventArgs) Handles btnBersihkan.Click
+        BersihkanForm()
+        lblStatus.Text = "Form dibersihkan."
+    End Sub
+End Class
+```
+Validasi keypress
+```vb
+' A. Khusus Angka Saja (Untuk Nilai, Umur, Jumlah, dll.)
+' Mengizinkan: Angka (0-9) dan Tombol Kontrol (Backspace, Delete)
+Private Sub txtNilai_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtNilai.KeyPress
+    If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) Then
+        e.Handled = True ' Membatalkan karakter yang ditekan
+    End If
+End Sub
+
+' B. Khusus Huruf dan Spasi Saja (Untuk Nama Orang)
+' Mengizinkan: Huruf (A-Z/a-z), Spasi (" "), dan Tombol Kontrol
+Private Sub txtNama_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtNama.KeyPress
+    If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsLetter(e.KeyChar) AndAlso e.KeyChar <> " "c Then
+        e.Handled = True
+    End If
+End Sub
+
+' C. Tanpa Spasi Sama Sekali (Untuk NIM, Username, Password)
+' Menolak tombol spasi agar tidak bisa ditekan
+Private Sub txtNIM_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtNIM.KeyPress
+    If e.KeyChar = " "c Then
+        e.Handled = True
+    End If
+End Sub
+
+' D. Angka dan Simbol Tertentu (Untuk Nomor HP / Telepon)
+' Mengizinkan: Angka, Tombol Kontrol, serta simbol "+" dan "-"
+Private Sub txtNoHP_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtNoHP.KeyPress
+    If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) AndAlso e.KeyChar <> "+"c AndAlso e.KeyChar <> "-"c Then
+        e.Handled = True
+    End If
+End Sub
+
+' E. Otomatis Menjadi Huruf Kapital (Uppercase)
+' Mengubah huruf kecil yang diketik langsung menjadi huruf besar
+Private Sub txtKode_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtKode.KeyPress
+    e.KeyChar = Char.ToUpper(e.KeyChar)
+End Sub
+```
