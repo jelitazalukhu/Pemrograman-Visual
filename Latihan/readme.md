@@ -1,4 +1,4 @@
-# Pertemuan 2 (Komponen Visual, Property, dan Method Dasar)
+# Pertemuan 2 
 ```vb
 Public Class Form1
     Private Sub btnTampilkan_Click(sender As Object, e As EventArgs) Handles btnTampilkan.Click
@@ -100,3 +100,21 @@ Event adalah kejadian yang dapat memicu kode untuk dijalankan.
 ```
 ---
 # Pertemuan 4
+```vb
+ Private Sub btnInput_Click(sender As Object, e As EventArgs) Handles btnInput.Click
+     Dim nilaiAwal As Integer
+     Dim nilaiAkhir As Integer
+
+     If Not Integer.TryParse(txtNilaiAwal.Text, nilaiAwal) OrElse Not Integer.TryParse(txtNilaiAkhir.Text, nilaiAkhir) Then
+         MsgBox("Masukkan Dalam Bentuk Angka")
+         Return
+     End If
+
+     'Perulangan for next
+     For i As Integer = nilaiAwal To nilaiAkhir
+         lstNilai.Items.Add(i) 'menambah angka ke listbox
+     Next
+ End Sub
+```
+
+# Pertemuan 5
